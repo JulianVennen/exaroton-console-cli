@@ -53,7 +53,9 @@ struct Config {
 impl Config {
     pub fn load() -> Result<Config, io::Error> {
         let data = fs::read_to_string("./config.toml")?;
-        let config: Config = toml::from_str(&data)?;
+        let mut config: Config = toml::from_str(&data)?;
+        config.server = config.server.replace("#", "");
+
         Ok(config)
     }
 }

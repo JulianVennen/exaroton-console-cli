@@ -1,0 +1,2 @@
+token = "" # exaroton API token. You can generate this on https://exaroton.com/account/
+server = "" # exaroton server ID. You can find this on the "Servers" page below the server name. It starts with a #
