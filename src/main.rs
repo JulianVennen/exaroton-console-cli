@@ -1,5 +1,6 @@
 use std::borrow::{Borrow, BorrowMut};
 use std::fs;
+use std::process::exit;
 use awc::{BoxedSocket, Client, ClientResponse};
 use awc::error::WsClientError;
 use awc::ws::{Codec, Frame, Message};
@@ -14,7 +15,6 @@ use toml;
 #[actix::main]
 async fn main() {
     // TODO: only allow connections to servers that are online
-    // TODO: terminate on shutdown
 
     match connect().await {
         Ok((_, mut connection)) => {
@@ -102,6 +102,24 @@ async fn handle_message(message: Value, connection: &mut Framed<BoxedSocket, Cod
                 "line" => {
                     if let Some(Value::String(data)) = message.get("data") {
                         println!("{}", data);
+                    }
+                }
+                "status" => {
+                    if let Some(Value::Object(server)) = message.get("data") {
+                        if let Some(Value::Number(status)) = server.get("status") {
+                            if let Some(status) = status.as_i64() {
+                                match status {
+                                    1 | 2 | 3 | 4 => {
+                                        subscribe_to_console_stream(connection).await;
+                                    }
+
+                                    _ => {
+                                        println!("Server is no longer online.");
+                                        exit(0);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 "keep-alive" => {

@@ -8,7 +8,6 @@ This project was mainly an excuse for me to use rust and might not be actively m
 
 ### Planned Features
 - only allow connections to servers that are online
-- exit when the server shuts down
 - select server using flag, use config as default
 - add flag to show a select menu of all available servers
 - add flag to stay open even if the server shuts down
